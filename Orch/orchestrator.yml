@@ -1,0 +1,6 @@
+---
+- hosts: orchestrator 
+  become: yes
+  roles:
+    - orchestrator
+

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+pmm-admin config --server {{ groups['pmm'] | map('extract', hostvars, ['ansible_default_ipv4','address']) | list | join(' ') }}
+pmm-admin add linux:metrics 
+pmm-admin start --all

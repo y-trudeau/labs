@@ -1,0 +1,8 @@
+[mysql]
+LabPXC1 ansible_host=10.0.7.128
+LabPXC2 ansible_host=10.0.7.129
+LabPXC3 ansible_host=10.0.7.130
+LabPXC4 ansible_host=10.0.7.131
+LabPXC5 ansible_host=10.0.7.132
+[bootstrap]
+LabPXC1 ansible_host=10.0.7.128

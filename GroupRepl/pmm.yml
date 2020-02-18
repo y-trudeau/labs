@@ -1,0 +1,11 @@
+---
+
+- hosts: pmm
+  become: yes
+  roles:
+    - pmm
+
+- hosts: all 
+  become: yes
+  roles:
+    - pmm-client

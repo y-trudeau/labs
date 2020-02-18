@@ -1,0 +1,27 @@
+---
+
+- name: Download the percona repo package
+  copy: 
+        src: percona-release_0.1-6.bionic_all.deb
+        dest: /tmp
+
+- name: Install the percona repo package
+  apt:
+     deb: /tmp/percona-release_0.1-6.bionic_all.deb
+     state: present
+
+- name: Install the pmm-client package
+  apt:
+      name: pmm-client
+      update_cache: yes 
+
+- name: Copy the pmm configuration script
+  template:
+    src: configure_pmm_client.sh.j2
+    dest: /tmp/configure_pmm_client.sh
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Run the pmm configuration script
+  shell: /tmp/configure_pmm_client.sh

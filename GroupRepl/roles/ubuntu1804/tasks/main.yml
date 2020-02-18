@@ -1,0 +1,61 @@
+---
+- name: Stop uneeded systemd services 
+  systemd:
+    state: stopped
+    name: "{{ item.value }}"
+  with_items:
+          - value: container-getty@0
+          - value: container-getty@1
+          - value: container-getty@2
+          - value: container-getty@3
+          - value: systemd-resolved
+  ignore_errors: True
+
+- name: Remove the /etc/resolv.conf symlink
+  file:
+          path: /etc/resolv.conf
+          state: absent
+
+- name: Copy a valid resolv.conf file
+  copy:
+          src: resolv.conf
+          dest: /etc/resolv.conf
+
+- name: Copy the default sources.list file 
+  copy:
+          src: sources.list
+          dest: /etc/apt/sources.list
+
+- name: Copy the environment file 
+  copy:
+          src: environment
+          dest: /etc/environment
+
+- name: Download they MySQL repo deb file
+  copy: 
+        src: "/home/yves/labs/GroupRepl/files/mysql-apt-config_0.8.10-1_all.deb"
+        dest: "/tmp/"
+
+- name: Install debconf-utils
+  apt:
+    name: debconf-utils
+    state: latest
+    update_cache: yes
+
+- name: ensure mysql upstream repository package is configured
+  debconf:
+    name: mysql-apt-config
+    question: "mysql-apt-config/{{ item.question }}"
+    value: "{{ item.value }}"
+    vtype: "{{ item.vtype | default ('select') }}"
+  with_items:
+    - question: select-tools
+      value: "Enabled"
+    - question: repo-codename
+      value: "xenial"
+    - question: select-server
+      value: "mysql-5.7"
+
+- name: Install MySQL repo
+  apt: deb="/tmp/mysql-apt-config_0.8.10-1_all.deb"
+       state=present

@@ -1,0 +1,79 @@
+---
+
+- name: Download the percona repo package
+  copy: 
+        src: percona-release_0.1-6.bionic_all.deb
+        dest: /tmp
+
+- name: Install the percona repo package
+  apt:
+     deb: /tmp/percona-release_0.1-6.bionic_all.deb
+     state: present
+
+- name: Specify MySQL root password before installing
+  debconf: name='mysql-server' question='percona-xtradb-cluster-server-5.7/root-pass' value='root' vtype='password'
+  become: true
+
+- name: Confirm MySQL root password before installing
+  debconf: name='mysql-server' question='percona-xtradb-cluster-server-5.7/re-root-pass' value='root' vtype='password'
+  become: true
+
+- name: Install toolkit
+  apt:
+    state: latest
+    name: percona-toolkit 
+    update_cache: yes 
+
+- name: Install percona-xtradb-cluster-57 
+  apt:
+    state: latest
+    name: percona-xtradb-cluster-57
+
+- name: copy the configuration template
+  template:
+    src: templates/my.cnf.j2
+    dest: /etc/mysql/my.cnf
+    owner: root
+    group: root
+    mode: 0644
+  register: mysql_config
+
+- name: Copy the .my.cnf file for the ubuntu user
+  copy:
+          src: .my.cnf
+          dest: /home/ubuntu/.my.cnf
+          owner: ubuntu
+          group: ubuntu
+
+- name: Delete the PXC default config files
+  file:
+          path: "{{ item.value }}"
+          state: absent
+  with_items:
+          - value: /etc/mysql/percona-xtradb-cluster.cnf
+          - value: /etc/mysql/percona-xtradb-cluster.conf.d/mysqld.cnf
+          - value: /etc/mysql/percona-xtradb-cluster.conf.d/wsrep.cnf
+
+- name: Stop MySQL prior to the bootstrap
+  systemd:
+          name: mysql
+          state: stopped 
+  ignore_errors: True
+
+- name: Manual kill, just to be sure
+  shell: killall mysqld
+  ignore_errors: True
+
+- name: Wait for mysqld to stop 
+  shell: sleep 15
+  ignore_errors: True
+
+- name: copy the Wsrep configuration template
+  template:
+    src: templates/wsrep.cnf.j2
+    dest: /etc/mysql/wsrep.cnf
+    owner: root
+    group: root
+    mode: 0644
+
+

@@ -1,0 +1,12 @@
+---
+- include: ubuntu1804.yml 
+
+- include: pmm.yml
+
+- include: mysql.yml
+
+- include: bootstrap.yml
+
+- include: router.yml
+
+

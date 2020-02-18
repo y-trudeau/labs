@@ -1,0 +1,6 @@
+---
+- hosts: pg 
+  become: yes
+  roles:
+    - pg
+

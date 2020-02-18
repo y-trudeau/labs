@@ -1,0 +1,8 @@
+---
+
+- include: /home/yves/labs/K8s/roles/all/tasks/main.yml
+
+- include: /home/yves/labs/K8s/roles/master/tasks/main.yml
+
+- include: /home/yves/labs/K8s/roles/cluster/tasks/main.yml
+

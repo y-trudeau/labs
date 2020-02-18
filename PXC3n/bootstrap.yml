@@ -1,0 +1,10 @@
+---
+- hosts: bootstrap 
+  become: yes
+  roles:
+    - bootstrap
+
+- hosts: mysql
+  become: yes
+  roles:
+    - cluster_start

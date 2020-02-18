@@ -1,0 +1,2 @@
+LABPREFIX=Lab1804Dev
+VMs="LXC/_1"

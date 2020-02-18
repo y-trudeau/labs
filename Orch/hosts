@@ -1,0 +1,11 @@
+
+[mysql]
+LabOrch1 ansible_host=10.0.7.29
+LabOrch2 ansible_host=10.0.7.30
+LabOrch3 ansible_host=10.0.7.31
+LabOrch4 ansible_host=10.0.7.32
+LabOrch5 ansible_host=10.0.7.33
+[orchestrator]
+LabOrch1 ansible_host=10.0.7.29
+LabOrch2 ansible_host=10.0.7.30
+LabOrch3 ansible_host=10.0.7.31

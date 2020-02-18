@@ -1,0 +1,13 @@
+- hosts: worker
+  become: yes
+  tasks:
+    - name: First check if joinCmd is defined
+      include_vars:
+        file: "./joinCmd.json" 
+      when: joinCmd is not defined
+
+    - name: join cluster
+      shell: "{{ joinCmd }} >> node_joined.txt"
+      args:
+        chdir: $HOME
+        creates: node_joined.txt

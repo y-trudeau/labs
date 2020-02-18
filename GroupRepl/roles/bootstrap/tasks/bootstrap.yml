@@ -1,0 +1,15 @@
+---
+- name: Copy the file with the bootstap variable set
+  copy: 
+        src: bootstrap.cnf
+        dest: /etc/mysql/conf.d/ZZZZ-bootstrap.cnf
+
+- name: Start MySQL on the bootstrap node
+  systemd:
+          name: mysql
+          state: started
+
+- name: Remove the bootstap config variable
+  file:
+          path: /etc/mysql/conf.d/ZZZZ-bootstrap.cnf
+          state: absent

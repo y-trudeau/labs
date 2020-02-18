@@ -1,0 +1,11 @@
+---
+- name: Run the common script on all nodes
+  script: GrCommonSetup.sh
+
+- name: Bootstrap first MySQL node
+  script: bootstrap.sh
+  when: inventory_hostname == groups['mysql'][0]
+
+- name: Issue the start group replication on the other nodes
+  script: startGr.sh
+  when: inventory_hostname != groups['mysql'][0]

@@ -1,0 +1,23 @@
+#Group replication config
+[mysqld]
+bind_address=0.0.0.0
+innodb_flush_log_at_trx_commit = 0
+innodb_flush_method=O_DIRECT
+
+{% set ipbytes = ansible_facts.eth0.ipv4.address.split('.') %}
+server_id={{ ipbytes[3] }}
+log_bin
+log_slave_updates
+master_info_repository = table
+relay_log_info_repository = table
+read_only
+
+enforce_gtid_consistency = on
+gtid_mode = on
+
+loose_rpl_semi_sync_slave_enabled = ON
+loose_rpl_semi_sync_master_enabled = ON
+loose_rpl_semi_sync_master_timeout = 1000
+loose_rpl_semi_sync_master_wait_no_slave = 1
+
+

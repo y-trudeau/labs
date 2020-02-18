@@ -1,0 +1,7 @@
+---
+
+- hosts: pmm
+  become: yes
+  roles:
+    - pmm
+

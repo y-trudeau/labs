@@ -1,0 +1,53 @@
+---
+
+- name: Install the Postgres apt key (Ubuntu)
+  shell: wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+
+- name: Install the Postgres repo (Ubuntu)
+  shell: echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list
+
+- name: run apt-get update through shell, having inconsistent results with apt module (Ubuntu)
+  shell: apt-get update
+
+- name: Install the packages (Ubuntu)
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - postgresql
+    - postgresql-contrib
+
+- name: Copy the postgresql.conf file
+  template:
+    src: templates/postgresql.conf.j2
+    dest: /etc/postgresql/11/main/postgresql.conf
+    owner: postgres
+    group: postgres
+    mode: 0644
+
+- name: Copy the pg_hba.conf file
+  template:
+    src: templates/pg_hba.conf.j2
+    dest: /etc/postgresql/11/main/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: 0640
+
+- name: Start postgresql
+  systemd:
+    name: postgresql
+    state: started
+  when: ansible_os_family == "Debian" 
+
+- name: Copy the pg_grants.sql file
+  template:
+    src: templates/pg_grants.sql.j2
+    dest: /tmp/pg_grants.sql
+    owner: postgres
+    group: postgres
+    mode: 0640
+
+- name: apply the grants 
+  shell: "su postgres -c 'cat /tmp/pg_grants.sql | psql'"
+  ignore_errors: yes

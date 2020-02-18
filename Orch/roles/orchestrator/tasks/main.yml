@@ -1,0 +1,58 @@
+
+- name: Create the orcestrator data directory
+  file:
+    path: /var/lib/orchestrator
+    state: directory
+
+- name: Extract the orchestrator tar file
+  unarchive:
+    src: orchestrator-3.1.3-linux-amd64.tar.gz
+    dest: /
+
+- name: Symlink orchestrator-client to /usr/bin
+  file:
+    src: /usr/local/orchestrator/resources/bin/orchestrator-client
+    dest: /usr/bin/orchestrator-client
+    owner: root
+    group: root
+    state: link
+
+- name: Install curl
+  apt:
+    name: curl
+    state: latest
+
+- name: Install jq 
+  apt:
+    name: jq
+    state: latest
+
+- name: Install bsdmainutils 
+  apt:
+    name: bsdmainutils
+    state: latest
+
+- name: copy the orchestrator configuration file
+  template:
+    src: orchestrator.conf.json.j2 
+    dest: /etc/orchestrator.conf.json
+    owner: root
+    group: root
+    mode: '0644'
+  register: orch
+
+- name: just force systemd to reread configs (2.4 and above)
+  systemd:
+    daemon_reload: yes
+
+- name: Start Orchestrator deamon
+  systemd: 
+    name: orchestrator
+    state: started
+    enabled: yes
+
+- name: Restart Orchestor if config changed
+  systemd:
+    name: orchestrator
+    state: restarted
+  when: orch.changed

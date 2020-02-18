@@ -1,0 +1,33 @@
+---
+
+- name: Specify MySQL root password before installing
+  debconf: name='mysql-server' question='mysql-server/root_password' value='root' vtype='password'
+  become: true
+
+- name: Confirm MySQL root password before installing
+  debconf: name='mysql-server' question='mysql-server/root_password_again' value='root' vtype='password'
+  become: true
+
+- name: Install MySQL-server
+  apt:
+    name: mysql-community-server
+    state: latest
+    update_cache: yes
+
+- name: copy the configuration template
+  template:
+    src: templates/group_repl.cnf.j2
+    dest: /etc/mysql/mysql.conf.d/zgroup_repl.cnf
+    owner: root
+    group: root
+    mode: 0644
+  register: group_config
+
+- name: restart MySQL if config changed
+  systemd:
+          name: mysql
+          state: restarted
+  when: group_config.changed
+
+- name: Add the MySQL metrics to pmm
+  shell: pmm-admin add mysql:metrics --user root --password root --socket /var/run/mysqld/mysqld.sock

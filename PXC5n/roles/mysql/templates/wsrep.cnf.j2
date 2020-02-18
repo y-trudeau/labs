@@ -1,0 +1,18 @@
+[mysqld]
+wsrep_provider=/usr/lib/libgalera_smm.so
+
+wsrep_cluster_name=pxc-cluster
+wsrep_cluster_address=gcomm://{{ groups['mysql'] | map('extract', hostvars, ['ansible_default_ipv4','address']) | list | join(',') }} 
+
+wsrep_node_address={{ ansible_default_ipv4.address }}
+
+wsrep_sst_method=xtrabackup-v2
+wsrep_sst_auth=root:root
+
+pxc_strict_mode=ENFORCING
+
+binlog_format=ROW
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+
+!include /etc/mysql/wsrep_provider_options.cnf

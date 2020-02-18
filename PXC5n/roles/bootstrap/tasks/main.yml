@@ -1,0 +1,8 @@
+---
+
+- name: Remove grastate.dat
+  file: 
+        path: /var/lib/mysql/grastate.dat
+        state: absent
+- name: Bootstrap the first node
+  shell: /bin/sh /usr/bin/mysqld_safe --wsrep-new-cluster  >/tmp/bootsrap.out 2>&1 &

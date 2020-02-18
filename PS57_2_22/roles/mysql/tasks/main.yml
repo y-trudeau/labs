@@ -1,0 +1,61 @@
+---
+
+- name: Download the percona repo package
+  copy:
+    src: percona-release_latest.generic_all.deb
+    dest: /tmp
+
+- name: Install the percona repo package
+  apt:
+     deb: /tmp/percona-release_latest.generic_all.deb
+     state: present
+
+- name: setup ps57 repo
+  shell: percona-release setup ps57
+
+- name: Specify MySQL root password before installing
+  debconf: name='mysql-server' question='percona-server-server-5.7/root-pass' value='root' vtype='password'
+  become: true
+
+- name: Confirm MySQL root password before installing
+  debconf: name='mysql-server' question='percona-server-server-5.7/re-root-pass' value='root' vtype='password'
+  become: true
+
+- name: Install packages for PS 5.7
+  apt:
+    name: "{{ item.value }}"
+    update_cache: yes 
+  with_items:
+          - value: percona-toolkit
+          - value: percona-server-server-5.7=5.7.22-28
+          - value: percona-server-client-5.7=5.7.22-28 
+          - value: sysbench
+          - value: pmm-client
+
+- name: copy the configuration template
+  template:
+    src: templates/my.cnf.j2
+    dest: /etc/mysql/my.cnf
+    owner: root
+    group: root
+    mode: 0644
+  register: mysql_config
+
+- name: restart MySQL if config changed
+  systemd:
+          name: mysql
+          state: restarted
+  when: mysql_config.changed
+
+- name: Copy the .my.cnf file for the ubuntu user
+  copy:
+          src: .my.cnf
+          dest: /home/ubuntu/.my.cnf
+          owner: ubuntu
+          group: ubuntu
+
+- name: configure pmm-client
+  shell: "pmm-admin config --server 10.2.2.12"
+
+- name: Add mysql:metrics
+  shell: pmm-admin add mysql:metrics --create-user --user root --password root

@@ -1,0 +1,1 @@
+sudo lxc-ls -f --lxcpath=/home/yves/labs/VMs/lxc

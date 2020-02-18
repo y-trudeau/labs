@@ -1,0 +1,18 @@
+[DEFAULT]
+#dynamic_config=/tmp/mysqlrouter_dynamic_conf.json
+
+[metadata_cache]
+bootstrap_server_addresses={{ groups['mysql'] | map('extract', hostvars, ['ansible_default_ipv4','address']) | list | join(',') }}
+metadata_cluster=testcluster
+ttl=3
+
+
+[routing:rw]
+router_id=1
+bind_address=0.0.0.0:13306
+destinations=metadata-cache://testcluster/default?role=PRIMARY,disconnect_on_promoted_to_primary=yes
+
+[routing:ro]
+router_id=2
+bind_address=0.0.0.0:13307
+destinations=metadata-cache://testcluster/default?role=SECONDARY

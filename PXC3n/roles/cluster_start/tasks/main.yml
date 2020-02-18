@@ -1,0 +1,4 @@
+---
+
+- name: Start the other cluster nodes
+  shell: /bin/sh /usr/bin/mysqld_safe  >/dev/null 2>&1 & 

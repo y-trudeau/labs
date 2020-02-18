@@ -1,0 +1,17 @@
+---
+
+- name: Install ProxySQL 
+  apt:
+          name: proxysql
+          state: latest
+
+- name: Install sqlite
+  apt:
+          name: sqlite3
+          state: latest
+
+- name: Stop ProxySQL to configure it
+  systemd:
+          name: proxysql
+          state: stopped
+

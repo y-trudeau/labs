@@ -1,0 +1,34 @@
+---
+- name: Stop uneeded systemd services 
+  systemd:
+    state: stopped
+    name: "{{ item.value }}"
+  with_items:
+          - value: container-getty@0
+          - value: container-getty@1
+          - value: container-getty@2
+          - value: container-getty@3
+          - value: systemd-resolved
+  ignore_errors: True
+
+- name: Remove the /etc/resolv.conf symlink
+  file:
+          path: /etc/resolv.conf
+          state: absent
+
+- name: Copy a valid resolv.conf file
+  copy:
+          src: resolv.conf
+          dest: /etc/resolv.conf
+
+- name: Copy the default sources.list file 
+  copy:
+          src: sources.list
+          dest: /etc/apt/sources.list
+
+- name: Copy the environment file 
+  copy:
+          src: environment
+          dest: /etc/environment
+
+

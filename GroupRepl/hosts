@@ -1,0 +1,8 @@
+[mysql]
+LabGrMySQL1 ansible_host=10.0.7.117
+LabGrMySQL2 ansible_host=10.0.7.118
+LabGrMySQL3 ansible_host=10.0.7.119
+[router]
+LabGrRouter ansible_host=10.0.7.120
+[pmm]
+LabGrPmm ansible_host=10.0.7.251

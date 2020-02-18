@@ -1,0 +1,11 @@
+lxc getty
+
+root@LabGrMySQL1:~# systemctl stop container-getty@0
+root@LabGrMySQL1:~# systemctl stop container-getty@1
+root@LabGrMySQL1:~# systemctl stop container-getty@2
+root@LabGrMySQL1:~# systemctl stop container-getty@3
+
+root@LabGrMySQL1:~# systemctl disable container-getty@3
+root@LabGrMySQL1:~# systemctl disable container-getty@2
+root@LabGrMySQL1:~# systemctl disable container-getty@1
+root@LabGrMySQL1:~# systemctl disable container-getty@0

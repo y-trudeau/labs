@@ -1,0 +1,34 @@
+---
+
+- name: install docker.io 
+  apt:     
+    name: docker.io
+    state: latest
+    update_cache: yes
+
+- name: install python3-docker 
+  apt:     
+    name: python3-docker 
+    state: latest
+
+- name: install the pmm-data container
+  docker_container:
+    name: pmm-data
+    image: percona/pmm-server:latest
+    state: present
+    volumes:
+        - /opt/prometheus/data
+        - /opt/consul-data
+        - /var/lib/mysql
+        - /var/lib/grafana
+
+- name: Starts pmm-server container
+  docker_container:
+    name: pmm-server
+    image: percona/pmm-server:latest
+    state: started
+    restart: no 
+    ports:
+        - "80:80"
+    volumes_from:
+        - pmm-data
