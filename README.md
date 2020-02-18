@@ -7,7 +7,9 @@ This set of scripts creates lab environments in LXC and/or KVM. The scripts are 
 
 For KVM, it is important the 3rd partition is /, no LVM.  The image needs not be mounted before kvm starts to set the hostname and machine-id
 
-Configure the variables at the top of the funcs.sh file to reflect your setup::
+Configure the variables at the top of the funcs.sh file to reflect your setup:
+
+::
 
   LABHOME=/home/yves/labs
   declare -A LXCsnap
@@ -19,13 +21,17 @@ Configure the variables at the top of the funcs.sh file to reflect your setup::
   KVMHOME=${LABHOME}/VMs
   BASEMAC="00:16:3e"
 
-To create a lab, create a directory in LABHOME (ex: PXC3n), then copy an ansible.cfg from another project and create a lab.sh file with::
+To create a lab, create a directory in LABHOME (ex: PXC3n), then copy an ansible.cfg from another project and create a lab.sh file with:
+
+::
 
   LABPREFIX=LabPXC3n
   VMs="LXC/1 LXC/2 LXC/3"
   Groups="mysql/1,2,3 bootstrap/1"
 
-This will creates 3 LXC VMS called LabPXC3n1, LabPXC3n2 and LabPXC3n3. The ansible hosts files will have 2 groups: mysql and bootstrap.  The hosts file will be created and populated by the script.  Once you are ready, do::
+This will creates 3 LXC VMS called LabPXC3n1, LabPXC3n2 and LabPXC3n3. The ansible hosts files will have 2 groups: mysql and bootstrap.  The hosts file will be created and populated by the script.  Once you are ready, do:
+
+::
 
   ../mkLab.sh 
 
